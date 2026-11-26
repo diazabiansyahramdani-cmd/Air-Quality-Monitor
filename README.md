@@ -20,7 +20,7 @@ Aplikasi web berbasis **PHP prosedural (Non-OOP)** dan **MySQL** untuk memantau 
 
 ## Tampilan Antarmuka
 
-![Tampilan Dashboard Air Quality Monitor](assets/preview.png)
+![Tampilan Dashboard Air Quality Monitor](assets/screenshot.png)
 
 ---
 ## Fitur Utama
