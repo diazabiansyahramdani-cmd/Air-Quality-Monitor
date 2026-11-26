@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Monitor — Sukabumi, Kalimantan & Depok</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --crust: #11111b;
+            --mantle: #181825;
+            --base: #1e1e2e;
+            --surface0: #313244;
+            --surface1: #45475a;
+            --overlay0: #6c7086;
+            --subtext0: #a6adc8;
+            --subtext1: #bac2de;
+            --text: #cdd6f4;
+            --mauve: #cba6f7;
+            --sky: #89dceb;
+            --blue: #89b4fa;
+            --green: #a6e3a1;
+            --yellow: #f9e2af;
+            --peach: #fab387;
+            --red: #f38ba8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--crust);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 24px 20px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+        }
+
+        /* NAVIGATION BAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            background-color: var(--mantle);
+            border: 1px solid var(--surface0);
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--mauve);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            background-color: transparent;
+            color: var(--subtext0);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .tab-btn:hover {
+            background-color: var(--base);
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            background-color: var(--mauve);
+            color: var(--crust);
+        }
+
+        /* DASHBOARD */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 980px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--base);
+            border: 1px solid var(--surface0);
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .panel-detail {
+            background-color: var(--mantle);
+            border: 1px solid var(--surface1);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--surface0);
+        }
+
+        .panel-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .count-badge {
+            background-color: var(--crust);
+            color: var(--sky);
+            border: 1px solid var(--surface0);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        /* FILTER AREA & STATUS STASIUN */
+        .filter-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-radius: 8px;
+            padding: 3px;
+        }
+
+        .filter-pill {
+            background: transparent;
+            border: none;
+            color: var(--subtext0);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 6px 11px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .filter-pill:hover {
+            color: var(--text);
+        }
+
+        .filter-pill.active {
+            background-color: var(--surface0);
+            color: var(--sky);
+        }
+
+        .filter-pill.region-active {
+            background-color: var(--mauve);
+            color: var(--crust);
+        }
+
+        /* TABEL STASIUN TERDAFTAR (TERPISAH PER AREA) */
+        .table-wrap {
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        thead th {
+            background-color: var(--mantle);
+            color: var(--subtext1);
+            text-align: left;
+            padding: 11px 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--surface0);
+            white-space: nowrap;
+        }
+
+        /* Pemisah Grup Area di Dalam Tabel */
+        tr.region-divider-row {
+            background-color: var(--mantle);
+            cursor: default;
+        }
+
+        tr.region-divider-row:hover {
+            background-color: var(--mantle);
+        }
+
+        tr.region-divider-row td {
+            padding: 8px 12px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--mauve);
+            border-top: 1px solid var(--surface0);
+            border-bottom: 1px solid var(--surface0);
+        }
+
+        tr.region-divider-row.kalimantan-header td {
+            color: var(--peach);
+        }
+
+        tr.region-divider-row.depok-header td {
+            color: var(--sky);
+        }
+
+        tbody tr.station-row {
+            border-bottom: 1px solid var(--mantle);
+            cursor: pointer;
+        }
+
+        tbody tr.station-row:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr.station-row:hover {
+            background-color: var(--base);
+        }
+
+        tbody tr.selected-row {
+            background-color: var(--base);
+            box-shadow: inset 3px 0 0 var(--sky);
+        }
+
+        tbody tr.selected-row td {
+            color: var(--text);
+        }
+
+        td {
+            padding: 10px 12px;
+            color: var(--subtext0);
+            vertical-align: middle;
+        }
+
+        .td-id {
+            color: var(--overlay0);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .td-station {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-aktif {
+            color: var(--green);
+        }
+
+        .status-nonaktif {
+            color: var(--red);
+        }
+
+        .btn-view {
+            background-color: var(--mantle);
+            color: var(--blue);
+            border: 1px solid var(--surface1);
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        tbody tr.selected-row .btn-view,
+        .btn-view:hover {
+            background-color: var(--sky);
+            color: var(--crust);
+            border-color: var(--sky);
+        }
+
+        /* DETAIL KUALITAS UDARA */
+        .detail-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--surface0);
+        }
+
+        .station-kicker-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .station-kicker {
+            font-size: 0.72rem;
+            color: var(--overlay0);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .region-tag {
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            background-color: var(--surface0);
+            color: var(--mauve);
+        }
+
+        .region-tag.kalimantan {
+            color: var(--peach);
+        }
+
+        .region-tag.depok {
+            color: var(--sky);
+        }
+
+        .station-heading {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--sky);
+            line-height: 1.2;
+        }
+
+        .station-sub {
+            font-size: 0.8rem;
+            color: var(--subtext0);
+            margin-top: 4px;
+        }
+
+        .timestamp-box {
+            text-align: right;
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            color: var(--subtext0);
+            white-space: nowrap;
+        }
+
+        .aqi-hero {
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 16px;
+        }
+
+        .aqi-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .aqi-number-group {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .aqi-number {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text);
+        }
+
+        .aqi-unit {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--overlay0);
+        }
+
+        .aqi-badge {
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--crust);
+            background-color: var(--overlay0);
+            text-transform: uppercase;
+        }
+
+        .aqi-scale-wrap {
+            margin-top: 8px;
+        }
+
+        .aqi-scale-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            height: 6px;
+            margin-bottom: 6px;
+        }
+
+        .scale-seg {
+            border-radius: 3px;
+            opacity: 0.25;
+        }
+
+        .scale-seg.active-seg {
+            opacity: 1;
+        }
+
+        .aqi-scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.68rem;
+            color: var(--overlay0);
+        }
+
+        .advisory-card {
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-left: 4px solid var(--blue);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+
+        .advisory-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--blue);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .advisory-text {
+            font-size: 0.82rem;
+            color: var(--subtext1);
+            line-height: 1.5;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+
+        .metric-label {
+            font-size: 0.72rem;
+            color: var(--overlay0);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--subtext1);
+            text-transform: uppercase;
+        }
+
+        .history-sub {
+            font-size: 0.7rem;
+            color: var(--overlay0);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 0.8rem;
+        }
+
+        .hist-time {
+            color: var(--subtext0);
+        }
+
+        .hist-metrics {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hist-pm {
+            color: var(--overlay0);
+            font-size: 0.75rem;
+        }
+
+        .hist-aqi {
+            font-weight: 800;
+            min-width: 68px;
+            text-align: right;
+        }
+
+        /* TAB INFO */
+        .info-container {
+            display: none;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .info-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .group-pill {
+            background-color: var(--mauve);
+            color: var(--crust);
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 5px 14px;
+            border-radius: 6px;
+        }
+
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .member-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .member-card {
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-left: 3px solid var(--green);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+
+        .member-index {
+            font-size: 0.7rem;
+            color: var(--overlay0);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .member-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .credit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .credit-item {
+            background-color: var(--crust);
+            border: 1px solid var(--surface0);
+            border-left: 3px solid var(--sky);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+
+        .credit-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--sky);
+            margin-bottom: 4px;
+        }
+
+        .credit-desc {
+            font-size: 0.8rem;
+            color: var(--subtext0);
+        }
+
+        .credit-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .credit-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="topbar">
+            <div class="brand">
+                <h1 class="brand-title">Sistem Pemantauan Kualitas Udara</h1>
+            </div>
+
+            <nav class="nav-tabs" aria-label="Navigasi Halaman">
+                <button class="tab-btn active" id="btnTabDashboard" onclick="switchTab('dashboard')">Dashboard</button>
+                <button class="tab-btn" id="btnTabInfo" onclick="switchTab('info')">Info</button>
+            </nav>
+        </header>
+
+        <!-- DASHBOARD MANTAU  -->
+        <main class="dashboard-grid" id="tabDashboard">
+            
+            <!-- DAFTAR STASIUN TERPISAH PER AREA -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Stasiun Terdaftar</h2>
+                    <span class="count-badge" id="stationCountBadge">0 Stasiun</span>
+                </div>
+
+                <!-- Filter Area Status -->
+                <div class="filter-toolbar">
+                    <div class="filter-group" aria-label="Filter Area">
+                        <button class="filter-pill region-active" id="regAll" onclick="setRegionFilter('ALL')">Semua Area</button>
+                        <button class="filter-pill" id="regSukabumi" onclick="setRegionFilter('Sukabumi')">Sukabumi</button>
+                        <button class="filter-pill" id="regKalimantan" onclick="setRegionFilter('Kalimantan')">Kalimantan</button>
+                        <button class="filter-pill" id="regDepok" onclick="setRegionFilter('Depok')">Depok</button>
+                    </div>
+
+                    <div class="filter-group" aria-label="Filter Status">
+                        <button class="filter-pill active" id="filterAll" onclick="setStatusFilter('ALL')">Semua</button>
+                        <button class="filter-pill" id="filterAktif" onclick="setStatusFilter('Aktif')">Aktif</button>
+                        <button class="filter-pill" id="filterNonaktif" onclick="setStatusFilter('Tidak Aktif')">Nonaktif</button>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Stasiun</th>
+                                <th>Wilayah</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="locationTableBody">
+                            <tr>
+                                <td colspan="5">Memuat daftar stasiun...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- DETAIL MANTAU LIVE GAISS -->
+            <section class="panel panel-detail">
+                <div class="detail-meta">
+                    <div>
+                        <div class="station-kicker-row">
+                            <span class="station-kicker">Lokasi Terpilih</span>
+                            <span class="region-tag" id="regionBadge">SUKABUMI</span>
+                        </div>
+                        <h2 class="station-heading" id="locationName">MEMUAT...</h2>
+                        <div class="station-sub" id="stationFullName">--</div>
+                    </div>
+                    <div class="timestamp-box">
+                        <div>Update Terakhir</div>
+                        <strong id="currentTime" style="color: var(--text);">--</strong>
+                    </div>
+                </div>
+
+                <!-- Indikator AQI + Skala -->
+                <div class="aqi-hero">
+                    <div class="aqi-top-row">
+                        <div class="aqi-number-group">
+                            <span class="aqi-number" id="aqiValue">--</span>
+                            <span class="aqi-unit">US AQI</span>
+                        </div>
+                        <span class="aqi-badge" id="categoryBadge">--</span>
+                    </div>
+
+                    <div class="aqi-scale-wrap">
+                        <div class="aqi-scale-bar">
+                            <div class="scale-seg" id="segBaik" style="background-color: var(--green);"></div>
+                            <div class="scale-seg" id="segSedang" style="background-color: var(--yellow);"></div>
+                            <div class="scale-seg" id="segSensitif" style="background-color: var(--peach);"></div>
+                            <div class="scale-seg" id="segBahaya" style="background-color: var(--red);"></div>
+                        </div>
+                        <div class="aqi-scale-labels">
+                            <span>0-50 Baik</span>
+                            <span>51-100 Sedang</span>
+                            <span>101-150 Sensitif</span>
+                            <span>151+ Tidak Sehat</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rekomendasi Kesehatan / Status Stasiun -->
+                <div class="advisory-card" id="advisoryBox">
+                    <div class="advisory-label" id="advisoryTitle">Rekomendasi Aktivitas</div>
+                    <p class="advisory-text" id="overviewText">Memuat analisis kualitas udara...</p>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Kadar PM2.5</div>
+                        <div class="metric-value" id="pm25Value">-- µg/m³</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Suhu Udara</div>
+                        <div class="metric-value" id="tempValue">-- °C</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Kelembapan</div>
+                        <div class="metric-value" id="humidValue">-- %</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">ID Stasiun</div>
+                        <div class="metric-value" id="stationId">#--</div>
+                    </div>
+                </div>
+
+                <div class="history-header">
+                    <span class="history-title">Riwayat 4 Jam Terakhir</span>
+                    <span class="history-sub">Interval 1 Jam</span>
+                </div>
+                <div class="history-list" id="historyContainer">
+                    <div class="history-row">Memuat riwayat pengukuran...</div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- INFO TIM  -->
+        <section class="info-container" id="tabInfo">
+            <div class="info-stack">
+
+                <div class="panel panel-detail">
+                    <div class="group-header">
+                        <h2 class="panel-title">Tim Pengembang Sistem</h2>
+                        <span class="group-pill">KELOMPOK 2</span>
+                    </div>
+
+                    <div class="member-grid">
+                        <div class="member-card">
+                            <div class="member-index">Anggota 01</div>
+                            <div class="member-name">Diaz</div>
+                        </div>
+                        <div class="member-card">
+                            <div class="member-index">Anggota 02</div>
+                            <div class="member-name">Xena</div>
+                        </div>
+                        <div class="member-card">
+                            <div class="member-index">Anggota 03</div>
+                            <div class="member-name">Ruaida</div>
+                        </div>
+                        <div class="member-card">
+                            <div class="member-index">Anggota 04</div>
+                            <div class="member-name">Saul</div>
+                        </div>
+                        <div class="member-card">
+                            <div class="member-index">Anggota 05</div>
+                            <div class="member-name">Rere</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Sumber Data & Kredit API</h2>
+                        <span class="count-badge">Auto-Sync 1 Jam</span>
+                    </div>
+
+                    <p style="font-size: 0.82rem; color: var(--subtext0); margin-bottom: 12px;">
+                        Seluruh parameter kualitas udara dan cuaca untuk area Sukabumi, Kalimantan, dan Depok diambil secara berkala setiap 1 jam dan disimpan ke dalam database relasional <strong>MySQL (air_quality)</strong> menggunakan layanan API terbuka berikut:
+                    </p>
+
+                    <div class="credit-list">
+                        <div class="credit-item">
+                            <div class="credit-name">Open-Meteo Air Quality API</div>
+                            <div class="credit-desc">Menyediakan data konsentrasi partikel halus (PM2.5) serta indeks kualitas udara standar Amerika Serikat (US AQI) per jam.</div>
+                            <a class="credit-link" href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener">https://open-meteo.com/en/docs/air-quality-api ↗</a>
+                        </div>
+
+                        <div class="credit-item">
+                            <div class="credit-name">Open-Meteo Weather Forecast API</div>
+                            <div class="credit-desc">Menyediakan data meteorologi lokal mencakup suhu udara (°C) dan kelembapan relatif (%) berdasarkan koordinat wilayah.</div>
+                            <a class="credit-link" href="https://open-meteo.com/en/docs" target="_blank" rel="noopener">https://open-meteo.com/en/docs ↗</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // --- STATE APLIKASI ---
+        let allStations = [];
+        let activeStationId = null;
+        let currentRegionFilter = 'ALL';
+        let currentStatusFilter = 'ALL';
+        const INTERVAL_1_JAM = 60 * 60 * 1000;
+
+        // --- DOM ELEMENTS ---
+        const tbody = document.getElementById('locationTableBody');
+        const stationCountBadge = document.getElementById('stationCountBadge');
+        const regionBadgeEl = document.getElementById('regionBadge');
+        const locationNameEl = document.getElementById('locationName');
+        const stationFullNameEl = document.getElementById('stationFullName');
+        const currentTimeEl = document.getElementById('currentTime');
+        const aqiValueEl = document.getElementById('aqiValue');
+        const categoryBadgeEl = document.getElementById('categoryBadge');
+        const advisoryBoxEl = document.getElementById('advisoryBox');
+        const advisoryTitleEl = document.getElementById('advisoryTitle');
+        const overviewTextEl = document.getElementById('overviewText');
+        const pm25ValueEl = document.getElementById('pm25Value');
+        const tempValueEl = document.getElementById('tempValue');
+        const humidValueEl = document.getElementById('humidValue');
+        const stationIdEl = document.getElementById('stationId');
+        const historyContainer = document.getElementById('historyContainer');
+
+        // --- NAVIGASI TAB ---
+        function switchTab(tab) {
+            const tabDashboard = document.getElementById('tabDashboard');
+            const tabInfo = document.getElementById('tabInfo');
+            const btnDashboard = document.getElementById('btnTabDashboard');
+            const btnInfo = document.getElementById('btnTabInfo');
+
+            if (tab === 'dashboard') {
+                tabDashboard.style.display = 'grid';
+                tabInfo.style.display = 'none';
+                btnDashboard.classList.add('active');
+                btnInfo.classList.remove('active');
+            } else {
+                tabDashboard.style.display = 'none';
+                tabInfo.style.display = 'block';
+                btnDashboard.classList.remove('active');
+                btnInfo.classList.add('active');
+            }
+        }
+
+        // --- FILTER AREA & STATUS ---
+        function setRegionFilter(region) {
+            currentRegionFilter = region;
+            document.getElementById('regAll').classList.toggle('region-active', region === 'ALL');
+            document.getElementById('regSukabumi').classList.toggle('region-active', region === 'Sukabumi');
+            document.getElementById('regKalimantan').classList.toggle('region-active', region === 'Kalimantan');
+            document.getElementById('regDepok').classList.toggle('region-active', region === 'Depok');
+            applyFilters();
+        }
+
+        function setStatusFilter(status) {
+            currentStatusFilter = status;
+            document.getElementById('filterAll').classList.toggle('active', status === 'ALL');
+            document.getElementById('filterAktif').classList.toggle('active', status === 'Aktif');
+            document.getElementById('filterNonaktif').classList.toggle('active', status === 'Tidak Aktif');
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const filtered = allStations.filter(loc => {
+                const locRegion = loc.region || 'Sukabumi';
+                const matchRegion = currentRegionFilter === 'ALL' || locRegion === currentRegionFilter;
+                const matchStatus = currentStatusFilter === 'ALL' || loc.status === currentStatusFilter;
+                return matchRegion && matchStatus;
+            });
+            renderStationTable(filtered);
+        }
+
+        // --- RENDER TABEL STASIUN TERPISAH PER AREA ---
+        function renderStationTable(stations) {
+            stationCountBadge.innerText = `${stations.length} Stasiun`;
+            tbody.innerHTML = '';
+
+            if (stations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 18px;">Tidak ada stasiun yang cocok.</td></tr>';
+                return;
+            }
+
+            const regions = ['Sukabumi', 'Kalimantan', 'Depok'];
+            regions.forEach(regName => {
+                const groupItems = stations.filter(s => (s.region || 'Sukabumi') === regName);
+                if (groupItems.length === 0) return;
+
+                // Header Pemisah Area
+                let headerClass = '';
+                if (regName === 'Kalimantan') headerClass = 'kalimantan-header';
+                else if (regName === 'Depok') headerClass = 'depok-header';
+
+                const divRow = document.createElement('tr');
+                divRow.className = `region-divider-row ${headerClass}`;
+                divRow.innerHTML = `<td colspan="5">AREA ${regName.toUpperCase()} (${groupItems.length} TITIK)</td>`;
+                tbody.appendChild(divRow);
+
+                // Baris Stasiun di Area Tersebut
+                groupItems.forEach(loc => {
+                    const isSelected = Number(loc.id_lokasi) === Number(activeStationId);
+                    const statusClass = loc.status === 'Aktif' ? 'status-aktif' : 'status-nonaktif';
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = 'station-row';
+                    if (isSelected) tr.classList.add('selected-row');
+                    tr.onclick = () => fetchData(loc.id_lokasi);
+
+                    tr.innerHTML = `
+                        <td class="td-id">#${String(loc.id_lokasi).padStart(2, '0')}</td>
+                        <td class="td-station">${loc.nama_stasiun}</td>
+                        <td>${loc.wilayah}</td>
+                        <td><span class="status-tag ${statusClass}">● ${loc.status}</span></td>
+                        <td><button class="btn-view" type="button">${isSelected ? 'AKTIF' : 'LIHAT'}</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        // --- 1. MUAT DAFTAR LOKASI DARI MYSQL ---
+        function loadLokasi(keepSelection = false) {
+            fetch('api.php?action=sync_all').catch(err => console.error(err));
+
+            fetch('api.php?action=get_lokasi')
+                .then(response => response.json())
+                .then(data => {
+                    allStations = data;
+                    if (data.length > 0) {
+                        if (!keepSelection || activeStationId === null) {
+                            activeStationId = data[0].id_lokasi;
+                        }
+                        applyFilters();
+                        fetchData(activeStationId);
+                    } else {
+                        renderStationTable([]);
+                    }
+                })
+                .catch(error => console.error('Error fetching lokasi:', error));
+        }
+
+        // --- 2. TARIK DATA PENGUKURAN & CUACA REAL-TIME ---
+        function fetchData(id_lokasi) {
+            activeStationId = id_lokasi;
+            applyFilters();
+
+            const stationObj = allStations.find(s => Number(s.id_lokasi) === Number(id_lokasi));
+            locationNameEl.innerText = "MEMUAT...";
+            stationFullNameEl.innerText = stationObj ? stationObj.nama_stasiun : "Mengambil data stasiun...";
+            
+            fetch(`api.php?action=get_data&id=${id_lokasi}`)
+                .then(response => response.json())
+                .then(data => {
+                    const reg = data.region || 'Sukabumi';
+                    regionBadgeEl.innerText = `AREA ${reg.toUpperCase()}`;
+                    regionBadgeEl.classList.remove('kalimantan', 'depok');
+                    if (reg === 'Kalimantan') regionBadgeEl.classList.add('kalimantan');
+                    else if (reg === 'Depok') regionBadgeEl.classList.add('depok');
+
+                    locationNameEl.innerText = data.wilayah.toUpperCase();
+                    stationFullNameEl.innerText = stationObj ? stationObj.nama_stasiun : `Wilayah ${data.wilayah}`;
+                    stationIdEl.innerText = `#${String(data.id_lokasi).padStart(2, '0')}`;
+
+                    // Reset segmen skala AQI
+                    document.querySelectorAll('.scale-seg').forEach(el => el.classList.remove('active-seg'));
+
+                    // KONDISI JIKA STATUS STASIUN DI DATABASE TIDAK AKTIF
+                    if (data.status && data.status.toLowerCase() !== 'aktif') {
+                        currentTimeEl.innerText = "NONAKTIF";
+                        aqiValueEl.innerText = "OFF";
+                        aqiValueEl.style.color = "var(--overlay0)";
+
+                        categoryBadgeEl.style.backgroundColor = "var(--red)";
+                        categoryBadgeEl.style.color = "var(--crust)";
+                        categoryBadgeEl.innerText = "SEDANG TIDAK AKTIF";
+
+                        advisoryBoxEl.style.borderLeftColor = "var(--red)";
+                        advisoryTitleEl.style.color = "var(--red)";
+                        advisoryTitleEl.innerText = "Status Stasiun Nonaktif";
+                        overviewTextEl.innerText = `Stasiun pemantauan di wilayah ${data.wilayah} (${reg}) sedang tidak aktif. Pengambilan data AQI dan cuaca dihentikan sementara hingga stasiun diaktifkan kembali di database.`;
+
+                        pm25ValueEl.innerText = "-- µg/m³";
+                        tempValueEl.innerText = "-- °C";
+                        humidValueEl.innerText = "-- %";
+
+                        renderHistoryList(data.history, "Tidak ada pengukuran aktif saat stasiun nonaktif.");
+                        return;
+                    }
+
+                    // KONDISI NORMAL JIKA STATUS STASIUN AKTIF
+                    currentTimeEl.innerText = data.live.waktu_pengukuran;
+
+                    const aqi = Number(data.live.aqi);
+                    aqiValueEl.innerText = aqi;
+                    pm25ValueEl.innerText = `${data.live.pm25} µg/m³`;
+                    tempValueEl.innerText = `${data.suhu} °C`;
+                    humidValueEl.innerText = `${data.kelembapan} %`;
+
+                    let statusColor, overview, activeSegId;
+                    if (aqi <= 50) {
+                        statusColor = 'var(--green)';
+                        activeSegId = 'segBaik';
+                        overview = `Udara di wilayah ${data.wilayah} (${reg}) tergolong bersih dan sangat baik. Kondisi ideal untuk seluruh aktivitas luar ruangan.`;
+                    } else if (aqi <= 100) {
+                        statusColor = 'var(--yellow)';
+                        activeSegId = 'segSedang';
+                        overview = `Kualitas udara di ${data.wilayah} (${reg}) berada pada tingkat sedang. Aman bagi masyarakat umum, kelompok sensitif tetap disarankan memantau kondisi.`;
+                    } else if (aqi <= 150) {
+                        statusColor = 'var(--peach)';
+                        activeSegId = 'segSensitif';
+                        overview = `Tingkat polusi udara meningkat di ${data.wilayah} (${reg}). Penderita asma, anak-anak, dan lansia disarankan memakai masker di luar ruangan.`;
+                    } else {
+                        statusColor = 'var(--red)';
+                        activeSegId = 'segBahaya';
+                        overview = `PERINGATAN: Kualitas udara di ${data.wilayah} (${reg}) tidak sehat. Kurangi aktivitas fisik berat di luar ruangan dan gunakan masker.`;
+                    }
+
+                    document.getElementById(activeSegId).classList.add('active-seg');
+                    aqiValueEl.style.color = statusColor;
+                    categoryBadgeEl.style.backgroundColor = statusColor;
+                    categoryBadgeEl.style.color = "var(--crust)";
+                    categoryBadgeEl.innerText = data.live.kategori.toUpperCase();
+                    advisoryBoxEl.style.borderLeftColor = statusColor;
+                    advisoryTitleEl.style.color = statusColor;
+                    advisoryTitleEl.innerText = "Rekomendasi Aktivitas";
+                    overviewTextEl.innerText = overview;
+
+                    renderHistoryList(data.history, "Belum ada riwayat pengukuran sebelumnya.");
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function renderHistoryList(historyData, emptyMessage) {
+            historyContainer.innerHTML = ''; 
+            if (!historyData || historyData.length === 0) {
+                historyContainer.innerHTML = `<div class="history-row"><span class="hist-time">${emptyMessage}</span></div>`;
+            } else {
+                historyData.forEach(hist => {
+                    const pastAqi = Number(hist.aqi);
+                    let pastColor = 'var(--text)';
+                    if (pastAqi <= 50) pastColor = 'var(--green)';
+                    else if (pastAqi <= 100) pastColor = 'var(--yellow)';
+                    else if (pastAqi <= 150) pastColor = 'var(--peach)';
+                    else pastColor = 'var(--red)';
+
+                    historyContainer.innerHTML += `
+                        <div class="history-row">
+                            <span class="hist-time">${hist.waktu_pengukuran}</span>
+                            <div class="hist-metrics">
+                                <span class="hist-pm">${hist.pm25} µg/m³</span>
+                                <span class="hist-aqi" style="color: ${pastColor}">AQI ${pastAqi}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // --- 3. AUTO-UPDATE SETIAP 1 JAM SEKALI ---
+        setInterval(() => {
+            loadLokasi(true);
+        }, INTERVAL_1_JAM);
+
+        // Inisialisasi Awal
+        loadLokasi(false);
+    </script>
+
+</body>
+</html>
